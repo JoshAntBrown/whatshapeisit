@@ -1,5 +1,7 @@
 (function() {
   'use strict';
+  var moment = require('moment');
+  var Vector = require('./modules/vector');
   var Circle = require('./modules/circle');
   var Triangle = require('./modules/triangle');
 
@@ -14,60 +16,38 @@
 
   circle.draw();
 
-  var date = new Date();
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var seconds = date.getSeconds();
+  var points = [
+    polarCoords(circle.x, circle.y, circle.r, 1),
+    polarCoords(circle.x, circle.y, circle.r, 90),
+    polarCoords(circle.x, circle.y, circle.r, 180)
+  ];
 
-  //make dem triangles
-  // var triangles = [];
-  //
-  // for (var i = 0; i < 3; i++) {
-  //   triangles[i] = new Triangle(ctx, polarCoords(circle.x,circle.y,circle.r,random(0,360)),polarCoords(circle.x,circle.y,circle.r,random(0,360)),polarCoords(circle.x,circle.y,circle.r,random(0,360)),'rgba(255,255,255,0.6)');
-  // }
-  //
-  // for (var t = 0, l = triangles.length; t < l; t++) {
-  //   triangles[t].draw();
-  // }
-
-  //make dem circles
-  var circles = [];
-
-  for (var i = 0; i < 6; i++) {
-    circles[i] = new Circle(ctx,circle.x,circle.y,5);
-    circles[i].update(polarCoords(circle.x,circle.y, circle.r,random(0,360)));
-  }
-
-  function connectDots(dots) {
-    ctx.beginPath();
-    for (var i = 0; i < dots.length; i++) {
-      ctx.moveTo(dots[i].x,dots[i].y);
-      for (var j = 0; j < dots.length; j++) {
-        ctx.lineTo(dots[j].x,dots[j].y);
-      }
-      ctx.fillStyle = 'rgba(190, 222, 77, 0.2)';
-      ctx.closePath();
-      ctx.fill();
-    }
-
-  }
+  var shape = new Vector(ctx, points);
 
   function draw() {
     ctx.clearRect(0,0,_window.innerWidth,_window.innerHeight);
-    moon.update(polarCoords(circle.x,circle.y,circle.r + 100,moonAngle));
-    rock.update(polarCoords(moon.x,moon.y,moon.r + rockOffset,rockAngle));
     circle.draw();
-    moon.draw();
-    rock.draw();
-    moonAngle += (1/60);
-    rockAngle -= (1/30);
-    rockOffset -= (1/120);
+
+    var date = moment();
+    var time = date.format('HHmmss');
+    shape.update({
+      points: [
+        polarCoords(circle.x, circle.y, circle.r, time[0]),
+        polarCoords(circle.x, circle.y, circle.r, time[1]),
+        polarCoords(circle.x, circle.y, circle.r, time[2]),
+        polarCoords(circle.x, circle.y, circle.r, time[3]),
+        polarCoords(circle.x, circle.y, circle.r, time[4]),
+        polarCoords(circle.x, circle.y, circle.r, time[5]),
+        polarCoords(circle.x, circle.y, circle.r, time[6]),
+      ]
+    });
+    shape.draw();
+
 
     window.requestAnimationFrame(draw);
   }
 
-  //draw();
-  connectDots(circles);
+  draw();
 
   function polarCoords(x,y,r,angle) {
     return {
