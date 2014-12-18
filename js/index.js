@@ -13,9 +13,9 @@
   canvas.setAttribute('height', _window.innerHeight);
   canvas.setAttribute('width', _window.innerWidth);
 
-  var circle = new Circle(ctx,canvas.width/2,canvas.height/2,100,'#fafafa');
-
-  circle.draw();
+  var sun = new Circle(ctx,canvas.width/2,canvas.height/2,100,'yellow');
+  var circle = new Circle(ctx,canvas.width/2,canvas.height/2,50,'skyblue');
+  var planetRotation = 0;
 
   var points = [
     polarCoords(circle.x, circle.y, circle.r, 1),
@@ -27,7 +27,11 @@
 
   function draw() {
     ctx.clearRect(0,0,_window.innerWidth,_window.innerHeight);
+
+    circle.update(polarCoords(sun.x, sun.y, sun.r + 100, planetRotation));
+    planetRotation += (1/60);
     circle.draw();
+    sun.draw();
 
     var date = moment();
     var time = date.format('HHmmss');
